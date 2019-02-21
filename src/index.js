@@ -1,8 +1,4 @@
-const fs = require('fs');
-const path = require('path');
+const walk = require('./modules/walkSync');
 
-fs.writeFile(path.join(__dirname, 'hello.txt'), 'Hello world!', err => {
-  if (err) {
-    console.log('Error write to file!');
-  }
-});
+const sourceFolder = process.argv[2];
+walk(sourceFolder);
