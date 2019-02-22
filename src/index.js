@@ -1,14 +1,27 @@
 const fs = require('fs');
 const path = require('path');
 const walk = require('./modules/walkSync');
+const deleteFolder = require('./modules/deleteFolder');
 
 const sourceFolder = process.argv[2];
 const outputFolder = process.argv[3];
+const isShouldRemoveInputFolder = process.argv[4];
 
 // Checks if the folder exists, if not creates it
 const checkOrCreateFolder = function (dirName) {
   if (!fs.existsSync(dirName)) {
     fs.mkdirSync(dirName);
+  }
+};
+
+// This is called after copying is complete
+const done = function (err) {
+  if (err) throw err;
+  console.log('Files sorted and copied!');
+
+  if (isShouldRemoveInputFolder) {
+    deleteFolder(sourceFolder);
+    console.log('Source folder deleted!');
   }
 };
 
@@ -30,4 +43,4 @@ if (!sourceFolder || !outputFolder) {
   checkOrCreateFolder(outputFolder);
 }
 
-walk(sourceFolder, callback);
+walk(sourceFolder, done, callback);

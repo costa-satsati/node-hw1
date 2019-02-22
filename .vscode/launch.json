@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\src\\index.js",
-            "args": ["source-folder", "dest-folder"]
+            "args": ["source-folder.1", "dest-folder", "true"]
         }
     ]
 }

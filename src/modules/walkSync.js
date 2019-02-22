@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const walkSync = function (dir, callback) {
+const walkSync = function (dir, done, callback) {
   let files;
   try {
     files = fs.readdirSync(dir);
@@ -12,11 +12,13 @@ const walkSync = function (dir, callback) {
   files.forEach(function (file) {
     const sPath = path.join(dir, file);
     if (fs.statSync(sPath).isDirectory()) {
-      walkSync(sPath, callback);
+      walkSync(sPath, done, callback);
     } else {
       callback(sPath);
     }
   });
+  // call done after file copy complete
+  done();
 };
 
 module.exports = walkSync;
