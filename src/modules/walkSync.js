@@ -1,8 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-const walkSync = function (dir) {
-  const files = fs.readdirSync(dir);
+const walkSync = function (dir, done) {
+  let files;
+  try {
+    files = fs.readdirSync(dir);
+  } catch (err) {
+    done(err);
+  }
 
   files.forEach(function (file) {
     const sPath = path.join(dir, file);
