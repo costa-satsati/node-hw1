@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require('mz/fs');
 const path = require('path');
-const walk = require('./modules/walkSync');
+const walk = require('./modules/walk');
 const deleteFolder = require('./modules/deleteFolder');
 
 const sourceFolder = process.argv[2];
@@ -8,9 +8,9 @@ const outputFolder = process.argv[3];
 const isShouldRemoveInputFolder = process.argv[4];
 
 // Checks if the folder exists, if not creates it
-const checkOrCreateFolder = function (dirName) {
-  if (!fs.existsSync(dirName)) {
-    fs.mkdirSync(dirName);
+const checkOrCreateFolder = async (dirName) => {
+  if (!await fs.exists(dirName)) {
+    await fs.mkdir(dirName);
   }
 };
 
@@ -25,15 +25,16 @@ const done = function (err) {
   }
 };
 
-const callback = function (filePath) {
+const callback = async (filePath) => {
   const fileName = path.basename(filePath);
   const folderName = fileName[0].toUpperCase();
   const newFilePath = path.resolve(outputFolder, `./${folderName}/${fileName}`);
-
-  checkOrCreateFolder(path.resolve(outputFolder, `./${folderName}`));
-  fs.copyFile(filePath, path.resolve(outputFolder, newFilePath), (err) => {
-    if (err) throw err;
-  });
+  try {
+    await checkOrCreateFolder(path.resolve(outputFolder, `./${folderName}`));
+    await fs.copyFile(filePath, path.resolve(outputFolder, newFilePath));
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 // Check input params
@@ -43,4 +44,4 @@ if (!sourceFolder || !outputFolder) {
   checkOrCreateFolder(outputFolder);
 }
 
-walk(sourceFolder, done, callback);
+walk(sourceFolder, callback).then(() => done());
